@@ -39,12 +39,23 @@ app.post('/tickets', function(req,res){
 		url = 'http://' + url; 
 	} 
 	request(url, function(err, response, body){	
-		db.Record.create({
+
+		if(!body){
+			db.Record.create({
+			address: url, 
+			data: 'No Data Found'
+		}).then(function(record){
+			res.render('ticket', {id: record.id});	
+			});		
+		}else{
+			db.Record.create({
 			address: url, 
 			data: body
 		}).then(function(record){
 			res.render('ticket', {id: record.id});	
-			});		
+			});			
+		}
+		
 	});
 
 });
