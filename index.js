@@ -17,18 +17,12 @@ app.use(methodOverride('_method'));
 
 // Start on Tickets Page 
 app.get('/', function(req, res){
-	res.redirect('/tickets');
-});
-
-app.get('/tickets', function(req, res){
 	res.render('index'); 
 });
-
 
 app.post('/tickets/form2', function(req, res){
 	var id = req.body.id;	
 		res.redirect('/tickets/' +id);
-
 });
 
 app.get('/tickets/:id', function(req,res){
