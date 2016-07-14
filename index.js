@@ -35,6 +35,9 @@ app.get('/tickets/:id', function(req,res){
 
 app.post('/tickets', function(req,res){
 	var url = req.body.address;
+	if(url.slice(0,3) === 'www'){
+		url = 'http://' + url; 
+	} 
 	request(url, function(err, response, body){	
 		db.Record.create({
 			address: url, 
