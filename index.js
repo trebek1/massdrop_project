@@ -24,13 +24,20 @@ app.get('/tickets', function(req, res){
 	res.render('index'); 
 });
 
-app.post('/tickets/:id', function(req,res){
-	var id = req.body.id; 
-	console.log("this is id ", id);
-	db.Record.findById(id).then(function(result){
-		res.render('data', {id: id, data: result.data});
-	});
+
+app.post('/tickets/form2', function(req, res){
+	var id = req.body.id;	
+		res.redirect('/tickets/' +id);
+
 });
+
+app.get('/tickets/:id', function(req,res){
+	var id = req.params.id; 
+	db.Record.findById(id).then(function(result){
+		res.render('data', {id: id, data: result.data}); 	
+	});
+	
+})
 
 app.post('/tickets', function(req,res){
 	var url = req.body.address;
