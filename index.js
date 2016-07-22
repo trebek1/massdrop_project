@@ -20,7 +20,24 @@ app.get('/', function(req, res){
 	res.render('index'); 
 });
 
+app.patch('/tickets/:id', function(req,res){
+	
+	var id = req.params.id; 
+	var url = req.body._method;
+
+	db.Record.findById(id).then(function(record){
+		//console.log("Here ", record.addressQueue); 
+		record.addressQueue.push(url);
+		record.save();  
+
+		res.render('data', {id: id, queue: record.addressQueue, data: record.responses}); 	
+		
+	});
+}); 
+
+
 app.post('/tickets/form2', function(req, res){
+	
 	var id = req.body.id;	
 		res.redirect('/tickets/' +id);
 });
@@ -33,7 +50,9 @@ app.get('/tickets/:id', function(req,res){
 	
 });
 
+
 app.post('/tickets', function(req,res){
+
 	var url = req.body.address + ''; 
 	var id = req.body.id; 
 
@@ -41,21 +60,14 @@ app.post('/tickets', function(req,res){
 		url = 'http://' + url; 
 	} 
 
-	if(id){
-		db.Record.findById(id).then(function(record){
-			record.addressQueue.push(url); 
-		}).then(function(record){
-			res.render('ticket', {id: record.id});
-		})
-	}else{
+	
 		db.Record.create({
 			addressQueue : [url],
 			addresses : [], 
 			response: []
 		}).then(function(record){
 			res.render('ticket', {id: record.id});	
-		})
-	}
+		}); 
 
 	// request(url, function(err, response, body){	
 

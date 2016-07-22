@@ -1,7 +1,21 @@
 <h1>Ticket ID: <%= id %> </h1> 
 <br/>
-<h3> Addresses in Queue: <%= queue %>	
+<h3> Addresses in Queue
+
+	<ul>
+		<% queue.forEach(function(address) { %>
+			<li><%=address%></li>
+		<% }); %>
+	</ul>
 <h3> Ticket Data: <%= data %></h1>
 <br/>
+
+<h2>Add Address to Ticket </h2>
+<form method="POST" action="/tickets/<%=id%>?_method=PATCH">
+	Submit a Web Url Here: <input type="text" name="_method">
+	<br/>
+	<button type="submit">Submit</button>
+</form>
+<br/><br/>
 <button onclick="location.href='/'">Back to Home</button>
 <br/><br/>
