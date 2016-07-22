@@ -1,8 +1,9 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Record = sequelize.define('Record', {
-    address: DataTypes.STRING,
-    data: DataTypes.TEXT
+    addressQueue: DataTypes.ARRAY(DataTypes.STRING),
+    responses: DataTypes.ARRAY(DataTypes.STRING),
+    addresses: DataTypes.ARRAY(DataTypes.STRING)
   }, {
     classMethods: {
       associate: function(models) {

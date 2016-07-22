@@ -8,11 +8,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      address: {
-        type: Sequelize.STRING
+      addressQueue: {
+        type: Sequelize.ARRAY(Sequelize.STRING)
       },
-      data: {
-        type: Sequelize.TEXT
+      responses: {
+        type: Sequelize.ARRAY(Sequelize.STRING)
+      },
+      addresses: {
+        type: Sequelize.ARRAY(Sequelize.STRING)
       },
       createdAt: {
         allowNull: false,

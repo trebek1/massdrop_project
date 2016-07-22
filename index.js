@@ -28,37 +28,58 @@ app.post('/tickets/form2', function(req, res){
 app.get('/tickets/:id', function(req,res){
 	var id = req.params.id; 
 	db.Record.findById(id).then(function(result){
-		res.render('data', {id: id, data: result.data}); 	
+		res.render('data', {id: id, queue: result.addressQueue, data: result.data}); 	
 	});
 	
-})
+});
 
 app.post('/tickets', function(req,res){
-	var url = req.body.address;
+	var url = req.body.address + ''; 
+	var id = req.body.id; 
+
 	if(url.slice(0,3) === 'www'){
 		url = 'http://' + url; 
 	} 
-	request(url, function(err, response, body){	
 
-		if(!body){
-			db.Record.create({
-			address: url, 
-			data: 'No Data Found'
+	if(id){
+		db.Record.findById(id).then(function(record){
+			record.addressQueue.push(url); 
+		}).then(function(record){
+			res.render('ticket', {id: record.id});
+		})
+	}else{
+		db.Record.create({
+			addressQueue : [url],
+			addresses : [], 
+			response: []
 		}).then(function(record){
 			res.render('ticket', {id: record.id});	
-			});		
-		}else{
-			db.Record.create({
-			address: url, 
-			data: body
-		}).then(function(record){
-			res.render('ticket', {id: record.id});	
-			});			
-		}
+		})
+	}
+
+	// request(url, function(err, response, body){	
+
+	// 	if(!body){
+	// 		db.Record.create({
+	// 		address: url, 
+	// 		data: 'No Data Found'
+	// 	}).then(function(record){
+	// 		res.render('ticket', {id: record.id});	
+	// 		});		
+	// 	}else{
+	// 		db.Record.create({
+	// 		address: url, 
+	// 		data: body
+	// 	}).then(function(record){
+	// 		res.render('ticket', {id: record.id});	
+	// 		});			
+	// 	}
 		
-	});
+	// });
 
 });
 
 // Start the server on port 3000
-app.listen(3000);
+app.listen(3000, function(){
+	console.log("running on 3000")
+})
