@@ -26,10 +26,12 @@ app.patch('/tickets/:id', function(req,res){
 	var url = req.body._method;
 
 	db.Record.findById(id).then(function(record){
-		//console.log("Here ", record.addressQueue); 
-		record.addressQueue.push(url);
-		record.save();  
-
+		var queue = record.addressQueue;
+			queue.push(url);
+		record.addressQueue = queue; 
+		record.save(function(data){
+		});
+		
 		res.render('data', {id: id, queue: record.addressQueue, data: record.responses}); 	
 		
 	});
