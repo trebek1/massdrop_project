@@ -7,7 +7,17 @@
 			<li><%=address%></li>
 		<% }); %>
 	</ul>
-<h3> Ticket Data: <%= data %></h1>
+<br/>
+<br/>
+<h3> Data That has been found 
+	<% if(data){ %>
+	<ul>
+			<% data.forEach(function(html, i) { %>
+				<%=addresses[i] %>
+				<li><%=html%></li>
+			<% }); %>
+	</ul>
+	<% } %>
 <br/>
 
 <h2>Add Address to Ticket </h2>

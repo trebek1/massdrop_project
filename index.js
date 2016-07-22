@@ -46,7 +46,7 @@ app.post('/tickets/form2', function(req, res){
 app.get('/tickets/:id', function(req,res){
 	var id = req.params.id; 
 	db.Record.findById(id).then(function(result){
-		res.render('data', {id: id, queue: result.addressQueue, data: result.responses}); 	
+		res.render('data', {id: id, queue: result.addressQueue,addresses: result.addresses, data: result.responses}); 	
 	});
 	
 });
@@ -57,7 +57,7 @@ app.post('/tickets/data', function(req,res){
 			if(results[i].addressQueue.length >0){
 				for(var j=0; j<results[i].addressQueue.length; j++){
 					var id = results[i].id; 
-					var url = results[i].addressQueue.shift(); 
+					var url = results[i].addressQueue[j]; 
 					 request(url, function(err, response, body){	
 					 	db.Record.findById(id).then(function(record){
 					 		var queue = record.addressQueue; 
@@ -65,7 +65,7 @@ app.post('/tickets/data', function(req,res){
 					 		var addresses = record.addresses; 
 					 		// shift the queue 
 					 		queue.shift(); 
-					 		record.queue = queue;
+					 		record.addressQueue = queue;
 					 		// add the response data to the record 
 					 		if(!responses){
 					 			responses = [body];
@@ -88,7 +88,7 @@ app.post('/tickets/data', function(req,res){
 				}
 			}
 		}
-		res.render('index'); 
+		res.redirect('index'); 
 	});
 });
 
