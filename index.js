@@ -29,8 +29,7 @@ app.patch('/tickets/:id', function(req,res){
 		var queue = record.addressQueue;
 			queue.push(url);
 		record.addressQueue = queue; 
-		record.save(function(data){
-		});
+		record.save(function(data){});
 		
 		res.render('data', {id: id, queue: record.addressQueue, data: record.responses}); 	
 		
@@ -47,11 +46,51 @@ app.post('/tickets/form2', function(req, res){
 app.get('/tickets/:id', function(req,res){
 	var id = req.params.id; 
 	db.Record.findById(id).then(function(result){
-		res.render('data', {id: id, queue: result.addressQueue, data: result.data}); 	
+		res.render('data', {id: id, queue: result.addressQueue, data: result.responses}); 	
 	});
 	
 });
 
+app.post('/tickets/data', function(req,res){
+	db.Record.all().then(function(results){
+		for(var i =0; i<results.length; i++){
+			if(results[i].addressQueue.length >0){
+				for(var j=0; j<results[i].addressQueue.length; j++){
+					var id = results[i].id; 
+					var url = results[i].addressQueue.shift(); 
+					 request(url, function(err, response, body){	
+					 	db.Record.findById(id).then(function(record){
+					 		var queue = record.addressQueue; 
+					 		var responses = record.responses;
+					 		var addresses = record.addresses; 
+					 		// shift the queue 
+					 		queue.shift(); 
+					 		record.queue = queue;
+					 		// add the response data to the record 
+					 		if(!responses){
+					 			responses = [body];
+					 		}else{
+					 			responses.push(body); 	
+					 		}
+					 		record.responses = responses; 
+					 		//update addresses with responses 
+					 		if(!addresses){
+					 			addresses = [url]
+					 		}else{
+					 			addresses.push(url); 	
+					 		}
+					 		record.addresses = addresses; 
+					 		//save
+					 		record.save(function(data){}); 
+
+					 	})
+					 });
+				}
+			}
+		}
+		res.render('index'); 
+	});
+});
 
 app.post('/tickets', function(req,res){
 
