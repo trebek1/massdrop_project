@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.ARRAY(Sequelize.STRING)
       },
       responses: {
-        type: Sequelize.ARRAY(Sequelize.STRING)
+        type: Sequelize.ARRAY(Sequelize.TEXT)
       },
       addresses: {
         type: Sequelize.ARRAY(Sequelize.STRING)

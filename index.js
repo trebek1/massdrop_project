@@ -31,7 +31,7 @@ app.patch('/tickets/:id', function(req,res){
 		record.addressQueue = queue; 
 		record.save(function(data){});
 		
-		res.render('data', {id: id, queue: record.addressQueue, data: record.responses}); 	
+		res.render('data', {id: id, queue: record.addressQueue,addresses: record.addresses, data: record.responses}); 	
 		
 	});
 }); 
@@ -53,12 +53,20 @@ app.get('/tickets/:id', function(req,res){
 
 app.post('/tickets/data', function(req,res){
 	db.Record.all().then(function(results){
+		// look at each record 
 		for(var i =0; i<results.length; i++){
-			if(results[i].addressQueue.length >0){
-				for(var j=0; j<results[i].addressQueue.length; j++){
-					var id = results[i].id; 
-					var url = results[i].addressQueue[j]; 
-					 request(url, function(err, response, body){	
+				// if the queue has something in it 
+			if(results[i].dataValues.addressQueue.length >0){
+					// loop through it 
+				for(var j=0; j<results[i].dataValues.addressQueue.length; j++){
+						// id should be unique to result 
+					var id = results[i].dataValues.id; 
+						// each address in the queue should be unique 
+					var url = results[i].dataValues.addressQueue[j]; 
+					 request(url, function(err, response, body){
+
+					 	if(err) return
+						// find the individual record corresponding to the id found before 
 					 	db.Record.findById(id).then(function(record){
 					 		var queue = record.addressQueue; 
 					 		var responses = record.responses;
@@ -68,20 +76,32 @@ app.post('/tickets/data', function(req,res){
 					 		record.addressQueue = queue;
 					 		// add the response data to the record 
 					 		if(!responses){
-					 			responses = [body];
+					 			if(body){
+					 				responses = [body];	
+					 			}else{
+					 				responses = []; 
+					 			}
+					 			
 					 		}else{
-					 			responses.push(body); 	
+					 			if(body){
+					 				responses.push(body); 	
+					 			}else{
+					 				responses = []; 
+					 			}
+					 			
 					 		}
 					 		record.responses = responses; 
 					 		//update addresses with responses 
 					 		if(!addresses){
-					 			addresses = [url]
+					 			addresses = [url];
 					 		}else{
 					 			addresses.push(url); 	
 					 		}
 					 		record.addresses = addresses; 
 					 		//save
-					 		record.save(function(data){}); 
+					 		record.save(function(data){
+					 			console.log('saved')
+					 		}); 
 
 					 	})
 					 });
@@ -109,26 +129,6 @@ app.post('/tickets', function(req,res){
 		}).then(function(record){
 			res.render('ticket', {id: record.id});	
 		}); 
-
-	// request(url, function(err, response, body){	
-
-	// 	if(!body){
-	// 		db.Record.create({
-	// 		address: url, 
-	// 		data: 'No Data Found'
-	// 	}).then(function(record){
-	// 		res.render('ticket', {id: record.id});	
-	// 		});		
-	// 	}else{
-	// 		db.Record.create({
-	// 		address: url, 
-	// 		data: body
-	// 	}).then(function(record){
-	// 		res.render('ticket', {id: record.id});	
-	// 		});			
-	// 	}
-		
-	// });
 
 });
 
