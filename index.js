@@ -27,6 +27,9 @@ app.patch('/tickets/:id', function(req,res){
 
 	db.Record.findById(id).then(function(record){
 		var queue = record.addressQueue;
+			if(url.slice(0,3) === 'www'){
+				url = 'http://' + url; 
+		} 
 			queue.push(url);
 		record.addressQueue = queue; 
 		record.save(function(data){});
@@ -65,8 +68,9 @@ app.post('/tickets/data', function(req,res){
 					var url = results[i].dataValues.addressQueue[j]; 
 					 request(url, function(err, response, body){
 
-					 	if(err) return
+					 	//if(err) return
 						// find the individual record corresponding to the id found before 
+						
 					 	db.Record.findById(id).then(function(record){
 					 		var queue = record.addressQueue; 
 					 		var responses = record.responses;
