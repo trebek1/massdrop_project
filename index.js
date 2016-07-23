@@ -17,7 +17,7 @@ app.use(methodOverride('_method'));
 
 // Start on Tickets Page 
 app.get('/', function(req, res){
-	res.render('index'); 
+	res.render('index', {message: ''}); 
 });
 
 app.patch('/tickets/data', function(req,res){
@@ -93,7 +93,7 @@ app.patch('/tickets/data', function(req,res){
 				}
 			}
 		} // loop for each result in database;
-		res.redirect('index'); 
+		res.redirect('index', {message: ''}); 
 	});
 });
 
@@ -120,8 +120,16 @@ app.patch('/tickets/:id', function(req,res){
 
 app.post('/tickets/form2', function(req, res){
 	
-	var id = req.body.id;	
-		res.redirect('/tickets/' +id);
+	var id = req.body.id;
+	db.Record.findById(id).then(function(result){
+		if(result){
+			res.redirect('/tickets/' +id);
+		}else{
+			res.render('index', {message: "invalid ticket number"});
+		}
+		
+	});	
+		
 });
 
 app.get('/tickets/:id', function(req,res){
