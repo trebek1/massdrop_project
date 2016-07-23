@@ -82,7 +82,7 @@ app.patch('/tickets/data', function(req,res){
 				}// end of new addresses loop 
 			}// if statement for new addresses
 		} // loop for each result in database;
-		res.redirect('index', {message: ''}); 
+		res.render('index', {message: ''}); 
 	});
 });
 
