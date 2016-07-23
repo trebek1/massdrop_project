@@ -20,6 +20,84 @@ app.get('/', function(req, res){
 	res.render('index'); 
 });
 
+app.patch('/tickets/data', function(req,res){
+	db.Record.all().then(function(results){
+		// look at each record 
+		for(var i =0; i<results.length; i++){
+				// if the queue has something in it
+				var newAddressesLength
+				if(results[i].dataValues.addressQueue){
+					newAddressesLength = results[i].dataValues.addressQueue.length;	
+				}else{
+					newAddressesLength = 0; 
+				}
+				
+			if(newAddressesLength>0){
+					// loop through it 
+				for(var j=0; j<newAddressesLength; j++){
+					(function(j){
+
+						var id = results[i].dataValues.id; 
+					console.log('do I get here? ', id) 
+						// each address in the queue should be unique 
+					var url = results[i].dataValues.addressQueue[j]; 
+					// get data from new url 
+					 request(url, function(err, response, body){
+
+						// find the individual record corresponding to the id found before 
+						
+					 	db.Record.findById(id).then(function(record){
+					 		console.log("What is id? ", id); 
+					 		var queue = record.addressQueue; 
+					 		var responses = record.responses;
+					 		var addresses = record.addresses; 
+					 		// shift the queue 
+					 		queue.shift(); 
+					 		record.addressQueue = queue;
+					 		// add the response data to the record 
+					 		if(!responses){
+					 			if(body){
+					 				responses = [body];	
+					 			}else{
+					 				responses = []; 
+					 			}
+					 			
+					 		}else{
+					 			if(body){
+					 				responses.push(body); 	
+					 			}else{
+					 				responses = []; 
+					 			}
+					 			
+					 		}
+					 		record.responses = responses; 
+					 		//update addresses with responses 
+					 		if(!addresses){
+					 			addresses = [url];
+					 		}else{
+					 			addresses.push(url); 	
+					 		}
+					 		record.addresses = addresses; 
+					 		//save
+					 		//db.Record.update(record); 
+
+					 		record.save(function(data){});
+
+					 	});
+					 });
+
+					})(j)
+						// id should be unique to result
+
+					
+				}
+			}
+		} // loop for each result in database;
+		res.redirect('index'); 
+	});
+});
+
+
 app.patch('/tickets/:id', function(req,res){
 	
 	var id = req.params.id; 
@@ -54,67 +132,6 @@ app.get('/tickets/:id', function(req,res){
 	
 });
 
-app.post('/tickets/data', function(req,res){
-	db.Record.all().then(function(results){
-		// look at each record 
-		for(var i =0; i<results.length; i++){
-				// if the queue has something in it 
-			if(results[i].dataValues.addressQueue.length >0){
-					// loop through it 
-				for(var j=0; j<results[i].dataValues.addressQueue.length; j++){
-						// id should be unique to result 
-					var id = results[i].dataValues.id; 
-						// each address in the queue should be unique 
-					var url = results[i].dataValues.addressQueue[j]; 
-					 request(url, function(err, response, body){
-
-					 	//if(err) return
-						// find the individual record corresponding to the id found before 
-						
-					 	db.Record.findById(id).then(function(record){
-					 		var queue = record.addressQueue; 
-					 		var responses = record.responses;
-					 		var addresses = record.addresses; 
-					 		// shift the queue 
-					 		queue.shift(); 
-					 		record.addressQueue = queue;
-					 		// add the response data to the record 
-					 		if(!responses){
-					 			if(body){
-					 				responses = [body];	
-					 			}else{
-					 				responses = []; 
-					 			}
-					 			
-					 		}else{
-					 			if(body){
-					 				responses.push(body); 	
-					 			}else{
-					 				responses = []; 
-					 			}
-					 			
-					 		}
-					 		record.responses = responses; 
-					 		//update addresses with responses 
-					 		if(!addresses){
-					 			addresses = [url];
-					 		}else{
-					 			addresses.push(url); 	
-					 		}
-					 		record.addresses = addresses; 
-					 		//save
-					 		record.save(function(data){
-					 			console.log('saved')
-					 		}); 
-
-					 	})
-					 });
-				}
-			}
-		}
-		res.redirect('index'); 
-	});
-});
 
 app.post('/tickets', function(req,res){
 
