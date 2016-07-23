@@ -94,6 +94,9 @@ app.patch('/tickets/:id', function(req,res){
 		if(url.slice(0,3) === 'www'){
 			url = 'http://' + url; 
 		} 
+		if(url.slice(0,3) !== 'htt'){
+			url = 'http://www.' + url; 
+		} 
 		queue.push(url);
 		result.addressQueue = queue; 
 		result.save(function(data){});
@@ -126,6 +129,9 @@ app.post('/tickets', function(req,res){
 	var id = req.body.id; 
 	if(url.slice(0,3) === 'www'){
 		url = 'http://' + url; 
+	} 
+	if(url.slice(0,3) !== 'htt'){
+		url = 'http://www.' + url; 
 	} 
 	db.Record.create({
 		addressQueue : [url],
