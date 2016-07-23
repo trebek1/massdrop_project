@@ -1,7 +1,6 @@
 <h1>Ticket ID: <%= id %> </h1> 
 <br/>
 <h3> Addresses in Queue
-
 	<ul>
 		<% queue.forEach(function(address) { %>
 			<li><%=address%></li>
@@ -12,10 +11,10 @@
 <h3> Data That has been found 
 	<% if(data){ %>
 	<ul>
-			<% data.forEach(function(html, i) { %>
-				<%=addresses[i] %>
-				<li><%=html%></li>
-			<% }); %>
+		<% data.forEach(function(html, i) { %>
+			<%=addresses[i] %>
+			<li><%=html%></li>
+		<% }); %>
 	</ul>
 	<% } %>
 <br/>

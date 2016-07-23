@@ -95,7 +95,6 @@ app.patch('/tickets/data', function(req,res){
 	});
 });
 
-
 app.patch('/tickets/:id', function(req,res){
 	
 	var id = req.params.id; 
@@ -114,7 +113,6 @@ app.patch('/tickets/:id', function(req,res){
 		
 	});
 }); 
-
 
 app.post('/tickets/form2', function(req, res){
 	
@@ -137,7 +135,6 @@ app.get('/tickets/:id', function(req,res){
 	});
 	
 });
-
 
 app.post('/tickets', function(req,res){
 
