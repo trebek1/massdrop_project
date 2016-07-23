@@ -35,18 +35,13 @@ app.patch('/tickets/data', function(req,res){
 					// loop through it 
 				for(var j=0; j<newAddressesLength; j++){
 					(function(j){
-
 						var id = results[i].dataValues.id; 
-						
 							// each address in the queue should be unique 
 						var url = results[i].dataValues.addressQueue[j]; 
 						// get data from new url 
 						 request(url, function(err, response, body){
-
 							// find the individual record corresponding to the id found before 
-							
 						 	db.Record.findById(id).then(function(record){
-						 		
 						 		var queue = record.addressQueue; 
 						 		var responses = record.responses;
 						 		var addresses = record.addresses; 
@@ -65,8 +60,7 @@ app.patch('/tickets/data', function(req,res){
 						 				responses.push(body); 	
 						 			}else{
 						 				responses = []; 
-						 			}
-						 			
+						 			}		
 						 		}
 						 		record.responses = responses; 
 						 		//update addresses with responses 
@@ -78,12 +72,9 @@ app.patch('/tickets/data', function(req,res){
 						 		record.addresses = addresses; 
 						 		//save
 						 		//db.Record.update(record); 
-
 						 		record.save(function(data){});
-
 						 	});
 						});
-
 					})(j)
 						// id should be unique to result
 
@@ -96,26 +87,22 @@ app.patch('/tickets/data', function(req,res){
 });
 
 app.patch('/tickets/:id', function(req,res){
-	
 	var id = req.params.id; 
 	var url = req.body._method;
-
 	db.Record.findById(id).then(function(result){
 		var queue = result.addressQueue;
-			if(url.slice(0,3) === 'www'){
-				url = 'http://' + url; 
+		if(url.slice(0,3) === 'www'){
+			url = 'http://' + url; 
 		} 
-			queue.push(url);
+		queue.push(url);
 		result.addressQueue = queue; 
 		result.save(function(data){});
-		
 		res.render('data', {id: id, queue: result.addressQueue,addresses: result.addresses, data: result.responses}); 	
 		
 	});
 }); 
 
 app.post('/tickets/form2', function(req, res){
-	
 	var id = req.body.id;
 	db.Record.findById(id).then(function(result){
 		if(result){
@@ -123,7 +110,6 @@ app.post('/tickets/form2', function(req, res){
 		}else{
 			res.render('index', {message: "invalid ticket number"});
 		}
-		
 	});	
 		
 });
@@ -133,18 +119,14 @@ app.get('/tickets/:id', function(req,res){
 	db.Record.findById(id).then(function(result){
 		res.render('data', {id: id, queue: result.addressQueue,addresses: result.addresses, data: result.responses}); 	
 	});
-	
 });
 
 app.post('/tickets', function(req,res){
-
 	var url = req.body.address + ''; 
 	var id = req.body.id; 
-
 	if(url.slice(0,3) === 'www'){
 		url = 'http://' + url; 
 	} 
-
 	db.Record.create({
 		addressQueue : [url],
 		addresses : [], 
@@ -152,7 +134,6 @@ app.post('/tickets', function(req,res){
 	}).then(function(record){
 		res.render('ticket', {id: record.id});	
 	}); 
-
 });
 
 // Start the server on port 3000
